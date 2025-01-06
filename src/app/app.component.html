@@ -1,4 +1,150 @@
-<div class="text-center">
-  <h1 class="text-4xl font-bold text-blue-500">Hallo Tailwind mit Angular!</h1>
-  <p class="text-gray-700">Das funktioniert!</p>
+<h1>Barcode Scanner</h1>
+
+<!-- Button, um den Scanner anzuzeigen/zu aktivieren -->
+<button (click)="activateScanner()">Scanner starten</button>
+
+<!-- Scanner nur anzeigen, wenn isScannerActive=true -->
+<zxing-scanner
+  *ngIf="isScannerActive"
+  [tryHarder]="true"
+  (camerasFound)="onCamerasFound($event)"
+  (scanError)="onScanError($event)"
+  (scanSuccess)="onScanSuccess($event)"
+  [formats]="barcodeFormats"
+  [device]="selectedDevice"
+  style="display: block; width: 400px; height: 300px; margin-top: 20px; border: 1px solid #ccc;"
+></zxing-scanner>
+
+<p style="margin-top: 16px;">
+
+
+  
+  Gescannter Code: <strong>{{ scannedValue }}</strong>
+</p>
+<h1>{{ scannedValue }}</h1>
+
+<div class="p-4">
+  <h1 class="text-2xl font-bold mb-4">Barcode-Formate</h1>
+  <!-- Button zum Ein- und Ausblenden der Tabelle -->
+  <button
+    (click)="toggleTable()"
+    class="px-4 py-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600 focus:outline-none"
+  >
+    {{ showTable ? 'Tabelle ausblenden' : 'Tabelle anzeigen' }}
+  </button>
+
+  <!-- Tabelle nur anzeigen, wenn `showTable` true ist -->
+  <div *ngIf="showTable" class="mt-4">
+    <table class="table-auto w-full border-collapse border border-gray-300">
+      <thead>
+        <tr>
+          <th class="border border-gray-300 bg-gray-100 p-2">Barcode-Format</th>
+          <th class="border border-gray-300 bg-gray-100 p-2">Beschreibung</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="border border-gray-300 p-2">AZTEC</td>
+          <td class="border border-gray-300 p-2">
+            Aztec-Codes, ähnlich QR-Codes, platzsparend und robust.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">CODABAR</td>
+          <td class="border border-gray-300 p-2">
+            Einfacher 1D-Barcode, häufig in Bibliotheken und Logistik.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">CODE_39</td>
+          <td class="border border-gray-300 p-2">
+            1D-Barcode für alphanumerische Daten, oft in Industrie und Behörden.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">CODE_93</td>
+          <td class="border border-gray-300 p-2">
+            Verbesserter 1D-Barcode mit höherer Dichte als CODE_39.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">CODE_128</td>
+          <td class="border border-gray-300 p-2">
+            1D-Barcode für alphanumerische Daten, vielseitig und effizient (z. B.
+            in Versandetiketten).
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">DATA_MATRIX</td>
+          <td class="border border-gray-300 p-2">
+            2D-Barcode, besonders kompakt, z. B. auf Medizinprodukten oder
+            kleinen Bauteilen.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">EAN_8</td>
+          <td class="border border-gray-300 p-2">
+            1D-Barcode für kurze Artikelnummern (8-stellig).
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">EAN_13</td>
+          <td class="border border-gray-300 p-2">
+            1D-Barcode für globale Artikelnummern (GTIN), z. B. auf Verpackungen.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">ITF</td>
+          <td class="border border-gray-300 p-2">
+            Interleaved 2 of 5, häufig in Logistik und Versand.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">MAXICODE</td>
+          <td class="border border-gray-300 p-2">
+            2D-Barcode, speziell für die Versandlogistik (UPS).
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">PDF_417</td>
+          <td class="border border-gray-300 p-2">
+            2D-Barcode mit großer Datenkapazität, z. B. für Tickets und ID-Karten.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">QR_CODE</td>
+          <td class="border border-gray-300 p-2">
+            QR-Codes für viele Anwendungsfälle, wie URLs, Texte, etc.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">RSS_14</td>
+          <td class="border border-gray-300 p-2">
+            Reduzierte symbologische Darstellung, z. B. für kleinere Barcodes.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">RSS_EXPANDED</td>
+          <td class="border border-gray-300 p-2">
+            Erweiterte RSS-Variante mit mehr Daten.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">UPC_A</td>
+          <td class="border border-gray-300 p-2">
+            1D-Barcode, häufig für Artikelnummern in den USA/Kanada.
+          </td>
+        </tr>
+        <tr>
+          <td class="border border-gray-300 p-2">UPC_E</td>
+          <td class="border border-gray-300 p-2">
+            Kompakte Variante von UPC_A für kleine Verpackungen.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+
+
